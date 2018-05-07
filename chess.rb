@@ -15,16 +15,18 @@ require_relative 'board'
 require_relative 'player'
 
 class Game
-  def initialize()
-    @board
-    @current_player
-    @players
+  def initialize
+    @board = nil
+    @current_player = nil
+    @players = nil
   end
-  def startGame()
-    createGameState()
-    gameLoop()
+
+  def startGame
+    createGameState
+    gameLoop
   end
-  def createGameState()
+
+  def createGameState
     player1 = Player.new('p1', 7)
     player2 = Player.new('p2', 0)
     @players = [player1, player2]
@@ -33,43 +35,47 @@ class Game
     player1.placePieces(@board)
     player2.placePieces(@board)
   end
+
   def otherPlayer
     if @current_player == @players[0]
       return @players[1]
     end
     return @players[0]
   end
-  def gameLoop()
+
+  def gameLoop
     while true
       @board.display
-      move = askForMove()
+      move = askForMove
       moveHash = @current_player.playMove(@board, move)  
-
-      isValid, message = moveHash.values_at(:valid, :message)
+      isValid = moveHash.fetch(:valid)
+      message = moveHash.fetch(:message)
+      
       if !isValid
         puts message
         next
       end
       
-      gameDone = checkGameState()
+      gameDone = checkGameState
       if gameDone 
-        return finishGame()
+        return finishGame
       end
 
       @current_player = otherPlayer
     end
   end
+
   def checkGameState
     !otherPlayer.hasKing
   end
 
   def parseUserInput(input)
     if input.include? ' '
-      return input.split(' ')
+      input.split(' ')
     elsif input.include? ','
-      return input.split(',')
+      input.split(',')
     else
-      return input.split('')
+      input.split('')
     end
   end
   
@@ -81,20 +87,19 @@ class Game
     puts "Now enter the space delimited x y position of where you want to go"
     newInput = gets.chomp
     newLoc = parseUserInput(newInput).map{|str| str.to_i }
-    return [oldLoc, newLoc]
+    [oldLoc, newLoc]
   end
+
   def finishGame
-    @board.display()
+    @board.display
     puts "#{@current_player.name} won"
     puts "#{otherPlayer.name} sucks"
     puts "enter y to play again, any other key to exit"
     input = gets.chomp
-    if input == "y"
-      return startGame()
-    else
-      exit 0
-    end
+    return startGame if input == "y"
+    exit 0
   end
+
 end
 
 game = Game.new()

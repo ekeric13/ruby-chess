@@ -1,7 +1,7 @@
 class BasePiece
   attr_reader :name, :owner
   attr_accessor :timesMoved
-  def initialize(name = '', owner = nil)
+  def initialize(name, owner)
     @name = name
     @owner = owner
     @timesMoved = 0

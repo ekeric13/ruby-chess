@@ -2,49 +2,71 @@ class Board
   def initialize()
     @squareLen = 9
     @boardLen = 8
-    @grid = Array.new(@boardLen) { Array.new(@boardLen).fill(EmptyPiece.new()) }
+    @grid = Array.new(@boardLen) { Array.new(@boardLen).fill(EmptyPiece.new('', nil)) }
   end
 
   def display
     print("\n")
-    arr = @grid
-    for row in (0..(arr.length*2)+1)
-      for col in (0..(arr.length*2)+1)
+    num_display_rows = (@grid.length*2)+2
+    num_display_cols = num_display_rows
+
+    (num_display_rows).times do |row|
+      (num_display_cols).times do |col|
         arrRow = (row-1) / 2
         arrCol = (col-1) / 2
-        spacesAfterNum = " " * (@squareLen - 1)
         if row == 0
-          if col == 0 
-            print(" ")
-          elsif col % 2 == 1
-            print('|')
-          else
-            print(arrCol.to_s + spacesAfterNum)
-          end
+          display_row_index(col, arrCol)
         elsif col == 0
-          if row % 2 == 1
-            print('-'* 5)
-          else
-            print(arrRow.to_s)
-          end      
+          display_col_index(row, arrRow)
         elsif row % 2 == 1
-          print('-'* 5)
+          display_horizontal_divider          
         elsif col % 2 == 1
-          print('|')
-        else             
-          val = arr[arrRow][arrCol]
-          consoleText = val.fullName
-          firstCase = (col+2) % 4 == 0 && (row+2) % 4 == 0
-          secondCase = col % 4 == 0 && row % 4 == 0
-          if firstCase || secondCase
-            consoleText = "\e[30m\e[47m#{consoleText}\e[0m"
-          end
-          print(consoleText)
+          display_vertical_divider          
+        else
+          display_piece(row, col, arrRow, arrCol)          
         end
       end
       print("\n")
     end
     print("\n")
+  end
+
+  def display_row_index(col, arrCol)
+    if col == 0 
+      print(" ")
+    elsif col % 2 == 1
+      print('|')
+    else
+      spacesAfterNum = " " * (@squareLen - 1)
+      print(arrCol.to_s + spacesAfterNum)
+    end
+  end
+
+  def display_col_index(row, arrRow)
+    if row % 2 == 1
+      print('-'* 5)
+    else
+      print(arrRow.to_s)
+    end  
+  end
+
+  def display_horizontal_divider
+    print('-'* 5)
+  end
+
+  def display_vertical_divider
+    print('|')
+  end
+
+  def display_piece(row, col, arrRow, arrCol)
+    val = @grid[arrRow][arrCol]
+    consoleText = val.fullName
+    firstCase = (col+2) % 4 == 0 && (row+2) % 4 == 0
+    secondCase = col % 4 == 0 && row % 4 == 0
+    if firstCase || secondCase
+      consoleText = "\e[30m\e[47m#{consoleText}\e[0m"
+    end
+    print(consoleText)
   end
 
   def pieceAtLocation(x,y)

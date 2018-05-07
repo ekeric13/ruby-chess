@@ -17,16 +17,16 @@ class Player
     pieces = []
     pieces.push(King.new('king  ', self))
     pieces.push(Queen.new('queen ', self))
-    for pawn in (0..7)
+    8.times do 
       pieces.push(Pawn.new('pawn  ', self))
     end
-    for rook in (0..1)
+    8.times do
       pieces.push(Rook.new('rook  ', self))
     end
-    for knight in (0..1)
+    2.times do
       pieces.push(Knight.new('knight', self))
     end
-    for bishop in (0..1)
+    2.times do
       pieces.push(Bishop.new('bishop', self))
     end
     return pieces
@@ -70,6 +70,7 @@ class Player
     oldLoc, newLoc = move 
     oldX, oldY = oldLoc
     newX, newY = newLoc
+
     movingPiece = board.pieceAtLocation(oldX,oldY)
     return {valid: false, message: 'you have to move a real piece'} if !movingPiece 
     if !pieceBelongsToPlayer(movingPiece)
@@ -97,7 +98,7 @@ class Player
     if !movingPiece.isKnight && board.piecesInWay(oldLoc, newLoc) 
       return {valid: false, message: 'cannot jump over pieces'}
     end
-    board.placePieceAt(oldX, oldY, EmptyPiece.new())
+    board.placePieceAt(oldX, oldY, EmptyPiece.new('', nil))
     board.placePieceAt(newX, newY, movingPiece)
     killedPiece.remove()
     movingPiece.timesMoved += 1
@@ -106,6 +107,6 @@ class Player
     if (newY == endOfBoardIndex && movingPiece.isPawn)
       replacePieceForQueen(movingPiece)
     end
-    return {valid: true}
+    {valid: true, message: ''}
   end
 end
